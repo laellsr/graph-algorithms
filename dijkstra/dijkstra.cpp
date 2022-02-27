@@ -5,114 +5,96 @@
 #include <cstring>
 #include <list>
 #include <queue>
-#define INFINITO 10000000
+#define MAX 10000000
 
 using namespace std;
 
-class Grafo
+class Graph
 {
 private:
-	int V; // número de vértices
 
-	// ponteiro para um array contendo as listas de adjacências
+	int V;
 	list<pair<int, int> > * adj;
 
 public:
 
-	// construtor
-	Grafo(int V)
+	Graph(int V)
 	{
-		this->V = V; // atribui o número de vértices
-
-		/*
-			cria as listas onde cada lista é uma lista de pairs
-			onde cada pair é formado pelo vértice destino e o custo
-		*/
+		this->V = V;
 		adj = new list<pair<int, int> >[V];
 	}
 
-	// adiciona uma aresta ao grafo de v1 à v2
-	void addAresta(int v1, int v2, int custo)
+	void addEdge(int v1, int v2, int weight)
 	{
-		adj[v1].push_back(make_pair(v2, custo));
+		adj[v1].push_back(make_pair(v2, weight));
 	}
 
-	// algoritmo de Dijkstra
-	int dijkstra(int orig, int dest)
+	int dijkstra(int source, int dest)
 	{
-		// vetor de distâncias
+
 		int dist[V];
+		int checked[V];
 
-		/*
-		   vetor de visitados serve para caso o vértice já tenha sido
-		   expandido (visitado), não expandir mais
-		*/
-		int visitados[V];
-
-		// fila de prioridades de pair (distancia, vértice)
 		priority_queue < pair<int, int>,
 					   vector<pair<int, int> >, greater<pair<int, int> > > pq;
 
-		// inicia o vetor de distâncias e visitados
 		for(int i = 0; i < V; i++)
 		{
-			dist[i] = INFINITO;
-			visitados[i] = false;
+			dist[i] = MAX;
+			checked[i] = false;
 		}
 
-		// a distância de orig para orig é 0
-		dist[orig] = 0;
+		dist[source] = 0;
 
-		// insere na fila
-		pq.push(make_pair(dist[orig], orig));
+		pq.push(make_pair(dist[source], source));
 
-		// loop do algoritmo
 		while(!pq.empty())
 		{
-			pair<int, int> p = pq.top(); // extrai o pair do topo
-			int u = p.second; // obtém o vértice do pair
-			pq.pop(); // remove da fila
+			pair<int, int> p = pq.top();
+			int u = p.second;
+			pq.pop();
 
-			// verifica se o vértice não foi expandido
-			if(visitados[u] == false)
+			if(checked[u] == false)
 			{
-				// marca como visitado
-				visitados[u] = true;
+				checked[u] = true;
 
 				list<pair<int, int> >::iterator it;
 
-				// percorre os vértices "v" adjacentes de "u"
 				for(it = adj[u].begin(); it != adj[u].end(); it++)
 				{
-					// obtém o vértice adjacente e o custo da aresta
 					int v = it->first;
-					int custo_aresta = it->second;
+					int edgeWeight = it->second;
 
-					// relaxamento (u, v)
-					if(dist[v] > (dist[u] + custo_aresta))
+					if(dist[v] > (dist[u] + edgeWeight))
 					{
-						// atualiza a distância de "v" e insere na fila
-						dist[v] = dist[u] + custo_aresta;
+						dist[v] = dist[u] + edgeWeight;
 						pq.push(make_pair(dist[v], v));
 					}
 				}
 			}
 		}
 
-		// retorna a distância mínima até o destino
 		return dist[dest];
 	}
 };
 
 void printHelp()
 {
-	cout << "Aqui vai ter um help";
+	cout << "\n## Dijkstra - Comandos Válidos ##\n\n";
+    cout << "1. Calcula a distancia mínima do vértice 1 até o vértice 5\n";
+    cout << "./dijkstra -f <arquivo-de-entrada> -i 1 -l 5\n";
+    cout << "\n";
+    
+    cout << "2. Imprime a distância do vértice inicial 1 até os demais\n";
+    cout << "./dijkstra -f <arquivo-de-entrada> -i 1\n";
+    cout << "\n";
 }
 
 int main(int argc, char *argv[])
 {
-	int i = 1, initialV = 0, finalV = 0; bool ascSolution = false;
-	Grafo *g;
+	int i = 1, initialV = 0, finalV = 0, v, e;
+    bool ascSolution = false;
+	Graph *g;
 
 	for(i = 1; i < argc; i++)
 	{
@@ -135,11 +117,9 @@ int main(int argc, char *argv[])
 
 				getline(inputFile, line);
 
-				int v, e;
-
 				sscanf(line.data(), "%d %d", &v, &e);
 
-				g = new Grafo(v);
+				g = new Graph(v+1);
 
 				int v1, v2, weight;
 
@@ -151,12 +131,12 @@ int main(int argc, char *argv[])
 
 					if (inputLength == 3)
 					{
-						g->addAresta(v1, v2, weight);
+						g->addEdge(v1, v2, weight);
 					}
 
 					else
 					{
-						g->addAresta(v1, v2, 1);
+						g->addEdge(v1, v2, 1);
 					}
 
 				}
@@ -190,9 +170,24 @@ int main(int argc, char *argv[])
 	}
 	else if (initialV > 0)
 	{
-
+        int dist;
+        for (i = 1; i <= v; i++)
+        {
+            dist = g->dijkstra(initialV, i);
+            if (i == v)
+            {
+                printf("%d:%d\n", i, dist);
+            }
+            else
+            {
+                printf("%d:%d ", i, dist);
+            }   
+        }
 	}
-	else cout << "Vértice inicial e final não informados" << "\n";
+	else
+    {
+        cout << "Vértice inicial e final não informados" << "\n";
+    } 
 
 	return 0;
 }
