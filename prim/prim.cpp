@@ -13,7 +13,7 @@ public:
 	Graph(int V); 
 	void addEdge(int u, int v, int w);
 
-	void primMST();
+	void primAGM();
 };
 
 Graph::Graph(int V)
@@ -28,7 +28,7 @@ void Graph::addEdge(int u, int v, int w)
 	adj[v].push_back(make_pair(u, w));
 }
 
-void Graph::primMST()
+void Graph::primAGM()
 {
 	priority_queue< iPair, vector <iPair> , greater<iPair> > pq;
 
@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
 		}
 
 	}
-	g.primMST();
+	g.primAGM();
 
 	return 0;
 }
