@@ -145,6 +145,5 @@ int main(int argc, char *argv[])
 
 	}
 	g.primMST();
-
 	return 0;
 }
