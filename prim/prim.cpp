@@ -2,7 +2,7 @@
 #include <list>
 using namespace std;
 
-#define vertices 5
+#define vertices 6
 
 class Graph
 {
