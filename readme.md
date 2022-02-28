@@ -6,6 +6,6 @@ Cada pasta contém seus respectivos makefiles.
 - Caso a terceira coluna de qualquer linha do arquivo de entrada esteja vazia, o valor do peso será 1.
 - Nenhum vértice deve ser nulo (= 0).
     - Com exceção em Bellman-Ford, onde vértice precisa iniciar em zero.
-- Distância para vértice inexistente pode resultar em número aleatório.
+- Distância para vértice inexistente pode resultar em um número aleatório.
 - Nenhum vértice deve ser negativo
 - Apenas o algorimto de Bellman-Ford aceita pesos negativos.
